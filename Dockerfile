@@ -30,7 +30,7 @@ COPY app /app
 RUN cd /app && \
     npm --unsafe-perm install
 RUN cd /app && \
-    if [ `cat package.json | jq -r '.scripts|has("build")'` == "true" ]; then npm --unsafe-perm run build; fi 
+    npm --unsafe-perm run build
 
 # Final Stage
 FROM base as final
