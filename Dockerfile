@@ -17,7 +17,7 @@ CMD bash -c 'export > /etc/envvars && /usr/sbin/runsvdir-start'
 RUN apt-get install -y --no-install-recommends vim less net-tools inetutils-ping wget curl git telnet nmap socat dnsutils netcat tree htop unzip sudo software-properties-common jq psmisc iproute python ssh rsync gettext-base
 
 # Nodejs
-RUN wget -O - https://nodejs.org/dist/v8.5.0/node-v8.5.0-linux-x64.tar.gz | tar xz
+RUN wget -O - https://nodejs.org/dist/v8.9.1/node-v8.9.1-linux-x64.tar.gz | tar xz
 RUN mv node* node
 ENV PATH $PATH:/node/bin
 
