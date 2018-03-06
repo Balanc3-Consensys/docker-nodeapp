@@ -17,7 +17,7 @@ CMD bash -c 'export > /etc/envvars && /usr/sbin/runsvdir-start'
 RUN apt-get install -y --no-install-recommends vim less net-tools inetutils-ping wget curl git telnet nmap socat dnsutils netcat tree htop unzip sudo software-properties-common jq psmisc iproute python ssh rsync gettext-base
 
 # Nodejs
-RUN wget -O - https://nodejs.org/dist/v8.9.1/node-v8.9.1-linux-x64.tar.gz | tar xz
+RUN wget -O - https://nodejs.org/dist/v8.9.4/node-v8.9.4-linux-x64.tar.gz | tar xz
 RUN mv node* node
 ENV PATH $PATH:/node/bin
 
@@ -30,7 +30,9 @@ COPY app /app
 RUN cd /app && \
     npm --unsafe-perm install
 RUN cd /app && \
-    npm --unsafe-perm run build
+    if cat package.json | jq -e '.scripts|has("build")' > /dev/bull; then \
+      npm --unsafe-perm run build; \
+    fi
 
 # Final Stage
 FROM base as final
@@ -40,5 +42,3 @@ COPY --from=build /app /app
 COPY sv /etc/service 
 ARG BUILD_INFO
 LABEL BUILD_INFO=$BUILD_INFO
-CMD bash -c 'export > /etc/envvars && /usr/sbin/runsvdir-start'
-
