@@ -24,6 +24,16 @@ ENV PATH $PATH:/node/bin
 # Build Stage
 FROM base as build
 
+# Setup ssh key, docker build --build-arg SSH_KEY="$(cat id_rsa)" ...
+ARG SSH_KEY
+RUN if [ "$SSH_KEY" ]; then  \
+      mkdir -p /root/.ssh && \
+      chmod 0700 /root/.ssh && \
+      ssh-keyscan github.com > /root/.ssh/known_hosts && \
+      echo "${SSH_KEY}" > /root/.ssh/id_rsa && \
+      chmod 600 /root/.ssh/id_rsa \
+    ;fi
+
 # Build tools
 RUN apt-get install -y build-essential
 COPY app /app
@@ -42,5 +52,3 @@ COPY --from=build /app /app
 COPY sv /etc/service 
 ARG BUILD_INFO
 LABEL BUILD_INFO=$BUILD_INFO
-CMD bash -c 'export > /etc/envvars && /usr/sbin/runsvdir-start'
-
